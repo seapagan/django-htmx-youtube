@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.views import LoginView
-from django.http.response import HttpResponse, HttpResponsePermanentRedirect
+from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import FormView, TemplateView
@@ -17,6 +16,16 @@ class IndexView(TemplateView):
 
 class Login(LoginView):
     template_name = "registration/login.html"
+
+
+class CustomLogout(LogoutView):
+    """Custom logout to re-enable GET."""
+
+    http_method_names = ["get", "post", "options"]
+
+    def get(self, request, *args, **kwargs):
+        print("in custom logout")
+        return self.post(request, *args, **kwargs)
 
 
 class RegisterView(FormView):
