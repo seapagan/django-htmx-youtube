@@ -54,11 +54,20 @@ def check_username(request):
 def add_film(request):
     name = request.POST.get("filmname")
 
-    film = Film.objects.create(name=name)
+    film = Film.objects.get_or_create(name=name)[0]
 
     # add the film to the user's list
     request.user.films.add(film)
 
     # return template with all of the user's films
+    films = request.user.films.all()
+    return render(request, "partials/film-list.html", context={"films": films})
+
+
+def delete_film(request, pk):
+    # remove the film from the user's list
+    request.user.films.remove(pk)
+
+    # return template with all of the user's remaining films
     films = request.user.films.all()
     return render(request, "partials/film-list.html", context={"films": films})
